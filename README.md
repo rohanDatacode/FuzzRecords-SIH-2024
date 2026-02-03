@@ -48,18 +48,18 @@ We built a **Phonetic Intelligence Engine** that solves these issues:
 
 ```mermaid
 graph TD
-    User[Officer / User] -->|Voice & Text Input| UI[Frontend UI (EJS + Tailwind)]
+    User["Officer / User"] -->|Voice & Text Input| UI["Frontend UI (EJS + Tailwind)"]
     
     subgraph "Application Layer (Node.js/Express)"
-        UI <-->|API Routes| Controller[Controllers]
-        Controller -->|Script Conversion| Transliterate[Google Transliterate API]
-        Controller -->|Phonetic Encoding| Soundex[Soundex Logic]
-        Controller -->|Fuzzy Matching| Levenshtein[Levenshtein Distance]
+        UI <-->|API Routes| Controller["Controllers"]
+        Controller -->|Script Conversion| Transliterate["Google Transliterate API"]
+        Controller -->|Phonetic Encoding| Soundex["Soundex Logic"]
+        Controller -->|Fuzzy Matching| Levenshtein["Levenshtein Distance"]
     end
     
     subgraph "Data Layer"
-        Controller <-->|JSON Documents| DB[(MongoDB Atlas)]
-        Controller <-->|Images/Files| Cloud[Image Storage]
+        Controller <-->|JSON Documents| DB[("MongoDB Atlas")]
+        Controller <-->|Images/Files| Cloud["Image Storage"]
     end
     
     Soundex -.->|Query| DB
