@@ -1,0 +1,138 @@
+<% layout('layout/boilerplate') %>
+
+<div class="pt-24 max-w-6xl mx-auto px-4 pb-20">
+    <div class="page-box rounded-xl p-8 max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-nasa text-blue-400 tracking-widest uppercase">Biometric Hub</h1>
+            <p class="text-gray-400 mt-2">Database Scanning Module</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="relative bg-slate-900 rounded-2xl overflow-hidden aspect-video border-4 border-slate-800">
+                <video id="video" class="w-full h-full object-cover" autoplay muted></video>
+                <canvas id="overlay" class="absolute top-0 left-0"></canvas>
+                <div id="loadingUI" class="absolute inset-0 flex items-center justify-center bg-slate-900/90 z-20">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                        <p class="text-blue-400 text-xs font-nasa">DOWNLOADING AI MODELS...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col">
+                <h3 class="text-xl font-nasa text-blue-300 mb-4">Match Status</h3>
+                <div id="matchResult" class="space-y-4">
+                    <div class="p-10 text-center text-slate-500 italic">Ready to scan...</div>
+                </div>
+                <button id="toggleCam" class="mt-6 bg-blue-600 text-white py-4 rounded-xl font-bold opacity-50 cursor-not-allowed" disabled>
+                    WAITING FOR MODELS...
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REMOVED defer TO ENSURE IT LOADS BEFORE THE SCRIPT BELOW -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+<script>
+    const video = document.getElementById('video');
+    const resultDiv = document.getElementById('matchResult');
+    const toggleBtn = document.getElementById('toggleCam');
+    
+    // Safety check for profiles data
+    const rawProfiles = `<%- JSON.stringify(profiles).replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>`;
+    const profiles = JSON.parse(rawProfiles) || []; 
+    
+    let faceMatcher = null;
+
+    async function startApp() {
+        // Check if faceapi actually exists
+        if (typeof faceapi === 'undefined') {
+            console.error("FaceAPI not loaded yet. Retrying in 1 second...");
+            setTimeout(startApp, 1000);
+            return;
+        }
+
+        try {
+            console.log("Loading models...");
+            await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
+            await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
+            
+            document.getElementById('loadingUI').classList.add('hidden');
+            toggleBtn.disabled = false;
+            toggleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            toggleBtn.innerText = "START LIVE SCAN";
+
+            const validProfiles = profiles.filter(p => p.faceDescriptor && p.faceDescriptor.length === 128);
+
+            if (validProfiles.length > 0) {
+                const labeledDescriptors = validProfiles.map(p => {
+                    return new faceapi.LabeledFaceDescriptors(
+                        `${p.firstNameEnglish} ${p.lastNameEnglish}|${p.id}`,
+                        [new Float32Array(p.faceDescriptor)]
+                    );
+                });
+                faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.6);
+                console.log("AI Ready. " + validProfiles.length + " targets in database.");
+            }
+        } catch (e) {
+            console.error("AI Init Error:", e);
+            resultDiv.innerHTML = `<div class="text-red-500">Error loading AI models. Check public/models folder.</div>`;
+        }
+    }
+
+    toggleBtn.addEventListener('click', async function() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+            video.srcObject = stream;
+            this.innerText = "SCANNING...";
+
+            video.onloadedmetadata = () => {
+                const canvas = document.getElementById('overlay');
+                const displaySize = { width: video.videoWidth, height: video.videoHeight };
+                faceapi.matchDimensions(canvas, displaySize);
+
+                setInterval(async () => {
+                    if (video.paused || video.ended) return;
+
+                    const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors();
+                    const resized = faceapi.resizeResults(detections, displaySize);
+                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    if (detections.length > 0 && faceMatcher) {
+                        const results = detections.map(d => faceMatcher.findBestMatch(d.descriptor));
+                        
+                        // Draw rectangles on faces
+                        faceapi.draw.drawDetections(canvas, resized);
+
+                        resultDiv.innerHTML = results.map(res => {
+                            if (res.label === 'unknown') return `<div class="p-4 bg-red-500/10 text-red-400 rounded-lg font-bold">⚠️ UNKNOWN SUBJECT</div>`;
+                            const [name, id] = res.label.split('|');
+                            return `<div class="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg shadow-lg animate-fadeIn">
+                                <p class="text-blue-400 text-xs font-bold uppercase">Match Detected</p>
+                                <p class="font-bold text-white text-xl">${name}</p>
+                                <a href="/record/${id}" class="text-xs text-blue-400 underline mt-2 block">View Full Profile</a>
+                            </div>`;
+                        }).join('');
+                    }
+                }, 1000);
+            };
+        } catch (err) {
+            alert("Camera access denied.");
+            console.error(err);
+        }
+    });
+
+    // Start the process when the window loads
+    window.onload = startApp;
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+</style>

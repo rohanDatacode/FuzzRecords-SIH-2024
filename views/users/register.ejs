@@ -1,0 +1,40 @@
+<% layout('layout/boilerplate') %>
+
+<div class="flex justify-center items-center min-h-[70vh]">
+    <div class="card-premium p-8 w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-2 text-center text-slate-800">Personnel Registration</h2>
+        <p class="text-slate-500 text-center mb-6 text-sm">Create an authorized user account</p>
+
+        <form action="/register" method="POST">
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1 text-slate-700">Username</label>
+                <input type="text" name="username" class="form-input w-full" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1 text-slate-700">Email Address</label>
+                <input type="email" name="email" class="form-input w-full" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1 text-slate-700">Assigned Role</label>
+                <select name="role" class="form-input w-full">
+                    <option value="viewer">Viewer (Read Only)</option>
+                    <option value="officer">Officer (Create & Edit)</option>
+                    <option value="admin">Admin (Full Control)</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-semibold mb-1 text-slate-700">Password</label>
+                <input type="password" name="password" class="form-input w-full" required>
+            </div>
+            <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-bold transition-all shadow-lg shadow-green-500/30">
+                Register Account
+            </button>
+        </form>
+
+        <div class="mt-6 pt-6 border-t border-slate-100 text-center">
+            <p class="text-sm text-slate-500">
+                Already have an account? <a href="/login" class="text-blue-600 font-bold hover:underline">Login here</a>
+            </p>
+        </div>
+    </div>
+</div>

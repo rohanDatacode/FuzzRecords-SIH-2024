@@ -1,0 +1,270 @@
+<% layout('./layout/boilerplate') -%>
+
+    <div class="mb-8">
+        <nav class="flex mb-2" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-blue-600">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                            </path>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-slate-800 md:ml-2">Analytics</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Analytics Dashboard</h1>
+                <p class="text-slate-500 mt-1">Real-time insights and statistical overview</p>
+            </div>
+            <div class="flex gap-2">
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
+                    Live Data
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto space-y-8">
+
+        <!-- Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="card-premium p-6 flex flex-col justify-between hover:border-blue-200 transition-all">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12%</span>
+                </div>
+                <div>
+                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Records</h4>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">
+                        <%= stats.total %>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-premium p-6 flex flex-col justify-between hover:border-red-200 transition-all">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-red-50 rounded-xl text-red-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span
+                        class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-full">Updated</span>
+                </div>
+                <div>
+                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Criminal Records</h4>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">
+                        <%= stats.criminal %>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-premium p-6 flex flex-col justify-between hover:border-amber-200 transition-all">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-amber-50 rounded-xl text-amber-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Victim Records</h4>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">
+                        <%= stats.victim %>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card-premium p-6 flex flex-col justify-between hover:border-emerald-200 transition-all">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Witness Records</h4>
+                    <p class="text-3xl font-bold text-slate-800 mt-1">
+                        <%= stats.witness %>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Monthly Trend -->
+            <div class="card-premium p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                    Monthly Trend
+                    <span class="ml-2 text-xs font-normal text-slate-500 px-2 py-1 bg-slate-100 rounded-full">New
+                        Cases</span>
+                </h3>
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Location Distribution -->
+            <div class="card-premium p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                    Top Locations
+                    <span class="ml-2 text-xs font-normal text-slate-500 px-2 py-1 bg-slate-100 rounded-full">Incident
+                        Hotspots</span>
+                </h3>
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="locationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gender Distribution -->
+            <div class="card-premium p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-6 text-center">Gender Distribution</h3>
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Age Distribution -->
+            <div class="card-premium p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-6 text-center">Age Distribution</h3>
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="ageChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Common Chart Defaults (Premium Theme)
+        Chart.defaults.color = '#64748b'; // Slate-500
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.scale.grid.color = '#f1f5f9'; // Slate-100
+
+        const monthlyData = <% - JSON.stringify(stats.monthly) %>;
+        const locationData = <% - JSON.stringify(stats.location) %>;
+        const genderData = <% - JSON.stringify(stats.gender) %>;
+        const ageData = <% - JSON.stringify(stats.age) %>;
+
+        // Monthly Chart
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'bar',
+            data: {
+                labels: monthlyData.map(d => d.monthLabel),
+                datasets: [{
+                    label: 'Records',
+                    data: monthlyData.map(d => d.count),
+                    backgroundColor: '#3b82f6', // Blue-500
+                    borderRadius: 4,
+                    barThickness: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, border: { display: false } },
+                    x: { grid: { display: false }, border: { display: false } }
+                }
+            }
+        });
+
+        // Location Chart
+        new Chart(document.getElementById('locationChart'), {
+            type: 'bar',
+            data: {
+                labels: locationData.map(d => d._id),
+                datasets: [{
+                    label: 'Records',
+                    data: locationData.map(d => d.count),
+                    backgroundColor: '#6366f1', // Indigo-500
+                    borderRadius: 4,
+                    barThickness: 20
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, border: { display: false } },
+                    x: { grid: { display: false }, border: { display: false } }
+                }
+            }
+        });
+
+        // Gender Chart
+        new Chart(document.getElementById('genderChart'), {
+            type: 'doughnut',
+            data: {
+                labels: genderData.map(d => d._id),
+                datasets: [{
+                    data: genderData.map(d => d.count),
+                    backgroundColor: ['#3b82f6', '#ec4899', '#cbd5e1'], // Blue, Pink, Slate
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                },
+                cutout: '75%'
+            }
+        });
+
+        // Age Chart
+        new Chart(document.getElementById('ageChart'), {
+            type: 'pie',
+            data: {
+                labels: ageData.map(d => d._id),
+                datasets: [{
+                    data: ageData.map(d => d.count),
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                }
+            }
+        });
+    </script>

@@ -1,0 +1,99 @@
+<% layout('./layout/boilerplate') -%>
+
+<div class="mb-8">
+    <nav class="flex mb-2" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="/" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-blue-600">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                    </svg>
+                    Dashboard
+                </a>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-1 text-sm font-medium text-slate-800 md:ml-2">Preview Record</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="max-w-5xl mx-auto space-y-8 pb-20">
+    <!-- Header -->
+    <div class="card-premium p-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800">Preview: <%= formData.firstName %> <%= formData.lastName %></h1>
+                <p class="text-slate-500">Review all details before saving to database</p>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="history.back()" class="px-6 py-2 rounded-xl border border-slate-200 font-bold hover:bg-slate-50">Edit</button>
+                <form action="/newrecord/submit" method="POST" id="submitForm">
+                    <button type="submit" class="px-6 py-2 rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/30">Confirm & Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Display -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="card-premium p-6">
+            <h3 class="font-bold text-blue-600 mb-4 uppercase text-xs tracking-widest">Subject Identity</h3>
+            <p class="text-slate-800 font-bold text-xl"><%= formData.firstName %> <%= formData.middleName %> <%= formData.lastName %></p>
+            <p class="text-slate-500">Aadhar: <%= formData.aadharNumber %></p>
+            <p class="text-slate-500">DOB: <%= formData.dob %></p>
+        </div>
+        <div class="card-premium p-6">
+            <h3 class="font-bold text-blue-600 mb-4 uppercase text-xs tracking-widest">Biometrics</h3>
+            <% if (formData.faceDescriptor) { %>
+                <div class="bg-green-50 text-green-700 p-3 rounded-lg border border-green-200 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
+                    Face Signature Encrypted & Ready
+                </div>
+            <% } else { %>
+                <div class="bg-amber-50 text-amber-700 p-3 rounded-lg border border-amber-200">No Face Data Detected</div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+    // FIXED: Using a safer way to handle JSON from EJS to JS
+    const rawData = `<%- JSON.stringify(formData).replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>`;
+    const formData = JSON.parse(rawData);
+    const form = document.getElementById('submitForm');
+
+    function createHiddenInput(name, value) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        return input;
+    }
+
+    function buildForm(data, prefix = '') {
+        for (const key in data) {
+            const value = data[key];
+            const inputName = prefix ? `${prefix}[${key}]` : key;
+            if (key === 'uploadedFiles') continue; 
+
+            if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                buildForm(value, inputName);
+            } else if (Array.isArray(value)) {
+                value.forEach((item, index) => {
+                    if (typeof item === 'object') buildForm(item, `${inputName}[${index}]`);
+                    else form.appendChild(createHiddenInput(`${inputName}[]`, item));
+                });
+            } else {
+                form.appendChild(createHiddenInput(inputName, value));
+            }
+        }
+    }
+
+    if (formData) buildForm(formData);
+</script>

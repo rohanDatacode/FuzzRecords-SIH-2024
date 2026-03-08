@@ -1,0 +1,60 @@
+<nav class="bg-brand-blue shadow-md fixed w-full z-50 top-0 left-0 border-b border-blue-800 navbar-white-text">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            
+            <!-- Left: Logo -->
+            <a href="/" class="flex items-center space-x-3 text-white">
+                <div class="bg-gray p-1.5 rounded-full shadow-sm">
+                    <svg class="w-6 h-6 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold tracking-wide text-white">FuzzRecords</h1>
+            </a>
+
+            <!-- Right: Dynamic Links -->
+            <div class="hidden md:flex items-center space-x-4 text-white">
+                
+                <% if (!currentUser) { %>
+                    <!-- GUEST NAVBAR -->
+                    <a href="/login" class="px-3 py-2 text-sm font-medium text-white hover:underline">Login</a>
+                    <a href="/register"
+                        class="bg-white text-brand-blue px-4 py-2 rounded-md text-sm font-bold hover:bg-blue-50 transition-all">
+                        Register
+                    </a>
+                
+                <% } else { %>
+                    <!-- LOGGED IN NAVBAR -->
+                    <a href="/" class="px-3 py-2 text-sm font-medium text-white hover:underline">Dashboard</a>
+                    <a href="/search" class="px-3 py-2 text-sm font-medium text-white hover:underline">Search</a>
+                    <a href="/face-search" class="px-3 py-2 text-sm font-medium text-white hover:underline">Face ID</a>
+
+                    <% if(currentUser.role === 'admin' || currentUser.role === 'officer') { %>
+                        <a href="/newrecord"
+                           class="bg-blue-700/60 text-white px-3 py-2 rounded-md text-sm font-medium border border-blue-600">
+                            + New Profile
+                        </a>
+                    <% } %>
+
+                    <div class="h-6 w-px bg-blue-700/50 mx-2"></div>
+
+                    <!-- User Identity -->
+                    <div class="flex flex-col items-end leading-tight">
+                        <span class="text-white text-sm font-bold"><%= currentUser.username %></span>
+                        <span class="text-white text-[10px] uppercase font-nasa opacity-80">
+                            <%= currentUser.role %>
+                        </span>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <a href="/logout"
+                        class="bg-red-500/30 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all border border-red-500/40">
+                        Logout
+                    </a>
+                <% } %>
+
+            </div>
+        </div>
+    </div>
+</nav>

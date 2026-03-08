@@ -1,0 +1,434 @@
+<% layout('./layout/boilerplate') -%>
+
+    <div class="mb-8">
+        <nav class="flex mb-2" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-blue-600">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                            </path>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-slate-800 md:ml-2">Profile Search</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Search Profiles</h1>
+                <p class="text-slate-500 mt-1">Advanced search across the intelligence database</p>
+            </div>
+            <button type="button" id="globalLangToggleBtn"
+                class="flex items-center space-x-2 px-4 py-2 rounded-full bg-white border border-blue-200 text-blue-600 shadow-sm hover:shadow-md transition-all text-sm font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129">
+                    </path>
+                </svg>
+                <span id="globalCurrentLang">Input Language: हिंदी</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Listening Indicator -->
+    <div id="listeningIndicator" class="fixed top-6 left-1/2 transform -translate-x-1/2 hidden z-50">
+        <div
+            class="flex items-center space-x-3 bg-blue-600 text-white px-5 py-2.5 rounded-full shadow-lg shadow-blue-500/30">
+            <div class="mic-animation">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                    </path>
+                </svg>
+            </div>
+            <span class="font-medium" id="listeningStatus">Listening...</span>
+        </div>
+    </div>
+
+    <form action="/search" method="POST" class="max-w-7xl mx-auto mb-10">
+
+        <div class="card-premium p-6">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Search Criteria</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <!-- Name Fields -->
+                <div class="relative">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">First Name / पहला नाम</label>
+                    <div class="relative">
+                        <input type="text" name="firstName" id="firstNameInput" class="form-input w-full pr-10"
+                            oninput="fetchSuggestions('firstName')"
+                            value="<%= typeof searchParams !== 'undefined' ? searchParams.firstName || '' : '' %>">
+                        <button type="button"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 voice-search-btn"
+                            data-target="firstNameInput">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                </path>
+                            </svg>
+                        </button>
+                        <ul id="firstNameSuggestionsList"
+                            class="absolute z-50 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Middle Name / मध्य नाम</label>
+                    <div class="relative">
+                        <input type="text" name="middleName" id="middleNameInput" class="form-input w-full pr-10"
+                            oninput="fetchSuggestions('middleName')"
+                            value="<%= typeof searchParams !== 'undefined' ? searchParams.middleName || '' : '' %>">
+                        <button type="button"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 voice-search-btn"
+                            data-target="middleNameInput">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                </path>
+                            </svg>
+                        </button>
+                        <ul id="middleNameSuggestionsList"
+                            class="absolute z-50 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Last Name / अंतिम नाम</label>
+                    <div class="relative">
+                        <input type="text" name="lastName" id="lastNameInput" class="form-input w-full pr-10"
+                            oninput="fetchSuggestions('lastName')"
+                            value="<%= typeof searchParams !== 'undefined' ? searchParams.lastName || '' : '' %>">
+                        <button type="button"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 voice-search-btn"
+                            data-target="lastNameInput">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                </path>
+                            </svg>
+                        </button>
+                        <ul id="lastNameSuggestionsList"
+                            class="absolute z-50 w-full bg-white border border-slate-200 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Date of Birth</label>
+                    <input type="date" name="dob" class="form-input w-full"
+                        value="<%= typeof searchParams !== 'undefined' ? searchParams.dob || '' : '' %>">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Gender</label>
+                    <select name="gender" class="form-input w-full">
+                        <option value="">Any</option>
+                        <option value="male" <%=typeof searchParams !=='undefined' && searchParams.gender==='male'
+                            ? 'selected' : '' %>>Male</option>
+                        <option value="female" <%=typeof searchParams !=='undefined' && searchParams.gender==='female'
+                            ? 'selected' : '' %>>Female</option>
+                        <option value="other" <%=typeof searchParams !=='undefined' && searchParams.gender==='other'
+                            ? 'selected' : '' %>>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Mobile No.</label>
+                    <input type="tel" name="mNumber" class="form-input w-full" placeholder="10 Digits"
+                        value="<%= typeof searchParams !== 'undefined' ? searchParams.mNumber || '' : '' %>">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Aadhar No.</label>
+                    <input type="text" name="aadharNumber" class="form-input w-full" placeholder="12 Digits"
+                        value="<%= typeof searchParams !== 'undefined' ? searchParams.aadharNumber || '' : '' %>">
+                </div>
+            </div>
+
+            <!-- Toggle Advanced -->
+            <details class="group">
+                <summary class="flex items-center cursor-pointer text-blue-600 font-medium mb-4 select-none">
+                    <svg class="w-4 h-4 mr-2 transition-transform group-open:rotate-90" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    Advanced Options (Physical & Address)
+                </summary>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 pt-4 border-t border-slate-100">
+                    <input type="text" name="address[district]" class="form-input" placeholder="District"
+                        value="<%= typeof searchParams !== 'undefined' && searchParams.address ? searchParams.address.district || '' : '' %>">
+                    <input type="text" name="address[city]" class="form-input" placeholder="City"
+                        value="<%= typeof searchParams !== 'undefined' && searchParams.address ? searchParams.address.city || '' : '' %>">
+                    <input type="number" name="appearance[height]" class="form-input" placeholder="Height (cm)"
+                        value="<%= typeof searchParams !== 'undefined' && searchParams.appearance ? searchParams.appearance.height || '' : '' %>">
+                    <select name="appearance[complexion]" class="form-input">
+                        <option value="">Complexion (Any)</option>
+                        <option value="fair" <%=typeof searchParams !=='undefined' && searchParams.appearance &&
+                            searchParams.appearance.complexion==='fair' ? 'selected' : '' %>>Fair</option>
+                        <option value="medium" <%=typeof searchParams !=='undefined' && searchParams.appearance &&
+                            searchParams.appearance.complexion==='medium' ? 'selected' : '' %>>Medium</option>
+                        <option value="dark" <%=typeof searchParams !=='undefined' && searchParams.appearance &&
+                            searchParams.appearance.complexion==='dark' ? 'selected' : '' %>>Dark</option>
+                    </select>
+                </div>
+            </details>
+
+            <div class="flex justify-end pt-4">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-md transition-all flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Search Profiles
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Results -->
+    <div class="max-w-7xl mx-auto pb-20">
+        <% if (typeof profiles !=='undefined' && profiles && profiles.length> 0) { %>
+            <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                Found <%= profiles.length %> Matches
+                    <span class="ml-3 text-sm font-normal text-slate-500 bg-slate-100 px-3 py-1 rounded-full">Sorted by
+                        relevance</span>
+            </h3>
+
+            <div class="space-y-4">
+                <% profiles.forEach(profile=> { %>
+                    <div
+                        class="card-premium p-6 flex flex-col md:flex-row gap-6 hover:shadow-lg transition-all border border-transparent hover:border-blue-100">
+                        <div class="w-full md:w-32 h-32 flex-shrink-0 bg-slate-100 rounded-lg overflow-hidden">
+                            <img src="<%= profile.images?.find(img => img.type === 'profile')?.url || '/images/default-profile.png' %>"
+                                alt="Profile Photo" class="w-full h-full object-cover"
+                                onerror="this.src='/images/default-profile.png'">
+                        </div>
+
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h4 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                        <%= profile.firstNameEnglish %>
+                                            <%= profile.lastNameEnglish %>
+                                                <% if (profile.matchPercentage) { %>
+                                                    <span
+                                                        class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-bold">
+                                                        <%= Math.round(profile.matchPercentage) %>% Match
+                                                    </span>
+                                                    <% } %>
+                                    </h4>
+                                    <p class="text-slate-500 font-medium">
+                                        <%= profile.firstNameHindi %>
+                                            <%= profile.lastNameHindi %>
+                                                <% if(profile.occupationEnglish) { %> • <%= profile.occupationEnglish %>
+                                                        <% } %>
+                                    </p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="/record/<%= profile.id %>"
+                                        class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">View</a>
+                                    <a href="/record/<%= profile.id %>/edit"
+                                        class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">Edit</a>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-y-2 gap-x-8 text-sm text-slate-600 mt-4">
+                                <div><span class="text-slate-400">Gender:</span>
+                                    <%= profile.gender || 'N/A' %>
+                                </div>
+                                <div><span class="text-slate-400">Dob:</span>
+                                    <%= profile.dob ? new Date(profile.dob).toLocaleDateString() : 'N/A' %>
+                                </div>
+                                <div><span class="text-slate-400">Mobile:</span>
+                                    <%= profile.mNumber || 'N/A' %>
+                                </div>
+                                <div><span class="text-slate-400">City:</span>
+                                    <%= profile.address?.city || 'N/A' %>
+                                </div>
+                            </div>
+
+                            <!-- Match Tags -->
+                            <% if (profile.scores) { %>
+                                <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-50">
+                                    <% let scoreTags=[]; if (profile.scores && profile.scores.name &&
+                                        profile.scores.name.firstName && profile.scores.name.firstName.raw> 80) {
+                                        scoreTags.push({label:'First Name', color:'green'});
+                                        }
+                                        if (profile.scores && profile.scores.name && profile.scores.name.lastName &&
+                                        profile.scores.name.lastName.raw > 80) {
+                                        scoreTags.push({label:'Last Name', color:'green'});
+                                        }
+                                        if (profile.scores && profile.scores.personal && profile.scores.personal.mNumber
+                                        > 0) {
+                                        scoreTags.push({label:'Mobile', color:'blue'});
+                                        }
+                                        if (profile.scores && profile.scores.personal && profile.scores.personal.dob >
+                                        0) {
+                                        scoreTags.push({label:'DOB', color:'blue'});
+                                        }
+                                        if (profile.scores && profile.scores.address && profile.scores.address.district
+                                        > 0) {
+                                        scoreTags.push({label:'District', color:'purple'});
+                                        }
+                                        %>
+                                        <% scoreTags.forEach(function(tag) { %>
+                                            <span
+                                                class="text-xs px-2 py-1 rounded-md bg-<%= tag.color %>-50 text-<%= tag.color %>-700 font-medium border border-<%= tag.color %>-100">
+                                                Matched: <%= tag.label %>
+                                            </span>
+                                            <% }); %>
+                                </div>
+                                <% } %>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div>
+            <% } else if (typeof profiles !=='undefined' ) { %>
+                <div class="text-center py-20">
+                    <div
+                        class="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-slate-800">No profiles found</h3>
+                    <p class="text-slate-500">Try adjusting your search criteria</p>
+                </div>
+                <% } %>
+    </div>
+
+    <style>
+        /* Voice Search Animation */
+        @keyframes micPulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .mic-animation svg {
+            animation: micPulse 1.5s ease-in-out infinite;
+        }
+    </style>
+
+    <!-- Voice Search Modal -->
+    <div id="speechModal"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform transition-all scale-100">
+            <div class="mb-6 relative">
+                <div
+                    class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 mic-animation">
+                    <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-1">Listening...</h3>
+                <p class="text-slate-500 text-sm" id="speechStatus">Speak now</p>
+            </div>
+
+            <button id="closeModalBtn"
+                class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 transition-colors">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <script src="/js/suggestions.js"></script>
+    <script src="/js/voiceSearch.js"></script>
+
+    <script>
+        // Suggestion UI Helpers (Adapting existing logic to new UI)
+        async function fetchSuggestions(type) {
+            const input = document.getElementById(`${type}Input`).value;
+            const suggestionsList = document.getElementById(`${type}SuggestionsList`);
+
+            if (input.trim().length < 2) {
+                suggestionsList.style.display = 'none';
+                suggestionsList.classList.add('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/suggestions?type=${type}&query=${encodeURIComponent(input)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const suggestions = await response.json();
+
+                if (suggestions.length > 0) {
+                    suggestionsList.innerHTML = suggestions.map(suggestion => {
+                        const nameField = type === 'firstName' ? 'firstNameEnglish' :
+                            type === 'middleName' ? 'middleNameEnglish' : 'lastNameEnglish';
+                        const hindiField = type === 'firstName' ? 'firstNameHindi' :
+                            type === 'middleName' ? 'middleNameHindi' : 'lastNameHindi';
+
+                        const displayName = `${suggestion[nameField] || ''}`;
+                        const displayHindi = `${suggestion[hindiField] || ''}`;
+                        const selectValue = suggestion[nameField];
+
+                        return `
+                        <li class="px-4 py-2 cursor-pointer hover:bg-blue-50 transition-all text-slate-700 border-b border-slate-50 last:border-0"
+                            onclick="selectSuggestion('${type}', '${selectValue}')">
+                            <div class="font-medium">${displayName}</div>
+                            <div class="text-xs text-slate-400">${displayHindi}</div>
+                        </li>
+                    `;
+                    }).join('');
+                    suggestionsList.style.display = 'block';
+                    suggestionsList.classList.remove('hidden');
+                } else {
+                    suggestionsList.style.display = 'none';
+                    suggestionsList.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function selectSuggestion(type, value) {
+            document.getElementById(`${type}Input`).value = value;
+            const list = document.getElementById(`${type}SuggestionsList`);
+            list.style.display = 'none';
+            list.classList.add('hidden');
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('ul') && !e.target.closest('input')) {
+                document.querySelectorAll('ul[id$="SuggestionsList"]').forEach(el => {
+                    el.style.display = 'none';
+                    el.classList.add('hidden');
+                });
+            }
+        });
+
+        // Auto-scroll to results
+        if (document.querySelector('.card-premium.hover\\:shadow-lg')) {
+            document.querySelector('.card-premium.hover\\:shadow-lg').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
