@@ -1,8 +1,14 @@
 const Profile = require('../models/profileSchema');
 const { getSoundex } = require('../utils/soundex');
+<<<<<<< HEAD
 const { 
     detectHindiScript, 
     transliterateToEnglish 
+=======
+const {
+    detectHindiScript,
+    transliterateToEnglish
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
 } = require('../utils/translator');
 const { calculateMatchPercentage } = require('../utils/levenshtein');
 
@@ -18,7 +24,11 @@ module.exports.resultRecord = async (req, res) => {
         // If Aadhar number is provided, it takes precedence as it's a unique identifier
         if (aadharNumber) {
             const profile = await Profile.findOne({ aadharNumber });
+<<<<<<< HEAD
             return res.render('records/search.ejs', { 
+=======
+            return res.render('records/search.ejs', {
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                 profiles: profile ? [{ ...profile.toObject(), matchPercentage: 100 }] : [],
                 searchParams: req.body
             });
@@ -54,6 +64,7 @@ module.exports.resultRecord = async (req, res) => {
         let soundexQuery = {};
         if (firstName || middleName || lastName) {
             let soundexConditions = [];
+<<<<<<< HEAD
             
             if (firstName) {
                 const isHindiFirst = detectHindiScript(firstName);
@@ -63,6 +74,17 @@ module.exports.resultRecord = async (req, res) => {
                     firstNameForSearch = await transliterateToEnglish(firstName, 'name');
                 }
                 
+=======
+
+            if (firstName) {
+                const isHindiFirst = detectHindiScript(firstName);
+                let firstNameForSearch = firstName;
+
+                if (isHindiFirst) {
+                    firstNameForSearch = await transliterateToEnglish(firstName, 'name');
+                }
+
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                 const firstNameSoundex = getSoundex(firstNameForSearch, false, false);
                 soundexConditions.push({ 'soundexCode.firstName': firstNameSoundex });
             }
@@ -70,11 +92,19 @@ module.exports.resultRecord = async (req, res) => {
             if (middleName) {
                 const isHindiMiddle = detectHindiScript(middleName);
                 let middleNameForSearch = middleName;
+<<<<<<< HEAD
                 
                 if (isHindiMiddle) {
                     middleNameForSearch = await transliterateToEnglish(middleName, 'name');
                 }
                 
+=======
+
+                if (isHindiMiddle) {
+                    middleNameForSearch = await transliterateToEnglish(middleName, 'name');
+                }
+
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                 const middleNameSoundex = getSoundex(middleNameForSearch, false, false);
                 soundexConditions.push({ 'soundexCode.middleName': middleNameSoundex });
             }
@@ -82,11 +112,19 @@ module.exports.resultRecord = async (req, res) => {
             if (lastName) {
                 const isHindiLast = detectHindiScript(lastName);
                 let lastNameForSearch = lastName;
+<<<<<<< HEAD
                 
                 if (isHindiLast) {
                     lastNameForSearch = await transliterateToEnglish(lastName, 'name');
                 }
                 
+=======
+
+                if (isHindiLast) {
+                    lastNameForSearch = await transliterateToEnglish(lastName, 'name');
+                }
+
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                 const lastNameSoundex = getSoundex(lastNameForSearch, false, false);
                 soundexConditions.push({ 'soundexCode.lastName': lastNameSoundex });
             }
@@ -95,15 +133,44 @@ module.exports.resultRecord = async (req, res) => {
         }
 
         // Execute first stage search with Soundex
+<<<<<<< HEAD
         const profiles = await Profile.find(soundexQuery);
+=======
+        let profiles = await Profile.find(soundexQuery);
+
+        // Fallback: if Soundex finds nothing (e.g. old profiles without soundexCode), do a broad regex search
+        if (profiles.length === 0 && (firstName || middleName || lastName)) {
+            console.log('Soundex returned 0 results, falling back to regex search...');
+            const regexConditions = [];
+            if (firstName) regexConditions.push(
+                { firstNameEnglish: new RegExp(firstName.substring(0, 3), 'i') },
+                { firstNameHindi: new RegExp(firstName.substring(0, 2), 'i') }
+            );
+            if (middleName) regexConditions.push(
+                { middleNameEnglish: new RegExp(middleName.substring(0, 3), 'i') },
+                { middleNameHindi: new RegExp(middleName.substring(0, 2), 'i') }
+            );
+            if (lastName) regexConditions.push(
+                { lastNameEnglish: new RegExp(lastName.substring(0, 3), 'i') },
+                { lastNameHindi: new RegExp(lastName.substring(0, 2), 'i') }
+            );
+            profiles = await Profile.find({ $or: regexConditions });
+            console.log(`Fallback found ${profiles.length} profiles`);
+        }
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
 
         // Calculate weighted match scores for all profiles
         const profilesWithMatches = profiles.map(profile => {
             let totalScore = 0;
             let scores = {
                 name: { firstName: 0, middleName: 0, lastName: 0 },
+<<<<<<< HEAD
                 personal: { 
                     gender: 0, 
+=======
+                personal: {
+                    gender: 0,
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                     dob: 0,
                     mNumber: 0,
                     occupation: 0
@@ -185,7 +252,11 @@ module.exports.resultRecord = async (req, res) => {
             }
 
             if (dob) {
+<<<<<<< HEAD
                 scores.personal.dob = (profile.dob && profile.dob.toISOString().split('T')[0] === dob ? 100 : 0) 
+=======
+                scores.personal.dob = (profile.dob && profile.dob.toISOString().split('T')[0] === dob ? 100 : 0)
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                     * weights.personal.dob;
                 totalScore += scores.personal.dob || 0;
             }
@@ -253,13 +324,21 @@ module.exports.resultRecord = async (req, res) => {
                 }
 
                 if (appearance.complexion) {
+<<<<<<< HEAD
                     scores.appearance.complexion = (profile.appearance?.complexion === appearance.complexion ? 100 : 0) 
+=======
+                    scores.appearance.complexion = (profile.appearance?.complexion === appearance.complexion ? 100 : 0)
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                         * weights.appearance.complexion;
                     totalScore += scores.appearance.complexion || 0;
                 }
 
                 if (appearance.build) {
+<<<<<<< HEAD
                     scores.appearance.build = (profile.appearance?.build === appearance.build ? 100 : 0) 
+=======
+                    scores.appearance.build = (profile.appearance?.build === appearance.build ? 100 : 0)
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                         * weights.appearance.build;
                     totalScore += scores.appearance.build || 0;
                 }
@@ -307,19 +386,32 @@ module.exports.resultRecord = async (req, res) => {
             };
         });
 
+<<<<<<< HEAD
         // Sort by match percentage and filter out low matches
         const matchedProfiles = profilesWithMatches
             .filter(p => p.matchPercentage > 0)
             .sort((a, b) => b.matchPercentage - a.matchPercentage);
 
         res.render('records/search.ejs', { 
+=======
+        // Sort by match percentage and filter out low matches (threshold > 1% to avoid noise)
+        const matchedProfiles = profilesWithMatches
+            .filter(p => p.matchPercentage > 1)
+            .sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+        res.render('records/search.ejs', {
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
             profiles: matchedProfiles,
             searchParams: req.body
         });
 
     } catch (error) {
         console.error('Search error:', error);
+<<<<<<< HEAD
         res.render('records/search.ejs', { 
+=======
+        res.render('records/search.ejs', {
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
             profiles: [],
             searchParams: req.body,
             error: 'An error occurred while searching'
@@ -335,8 +427,13 @@ module.exports.getSuggestions = async (req, res) => {
         }
 
         const isHindiQuery = containsHindi(query);
+<<<<<<< HEAD
         let searchField = type === 'firstName' ? 
             (isHindiQuery ? 'firstNameHindi' : 'firstNameEnglish') : 
+=======
+        let searchField = type === 'firstName' ?
+            (isHindiQuery ? 'firstNameHindi' : 'firstNameEnglish') :
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
             (isHindiQuery ? 'lastNameHindi' : 'lastNameEnglish');
 
         let searchQuery = {};
@@ -356,13 +453,21 @@ module.exports.getSuggestions = async (req, res) => {
 module.exports.searchCases = async (req, res) => {
     try {
         const { query } = req.query;
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
         let searchQuery = {};
         if (query) {
             const isHindiQuery = containsHindi(query);
             searchQuery.$or = [
                 { caseNumber: new RegExp(query, 'i') },
+<<<<<<< HEAD
                 isHindiQuery ? 
+=======
+                isHindiQuery ?
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                     { 'description.hindi': new RegExp(query, 'i') } :
                     { 'description.english': new RegExp(query, 'i') },
                 isHindiQuery ?
@@ -383,4 +488,8 @@ module.exports.searchCases = async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         return res.status(500).json({ error: 'Search failed' });
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd

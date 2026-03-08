@@ -114,8 +114,11 @@ module.exports = {
                 });
             }
 
+<<<<<<< HEAD
             const faceDescriptor = req.body.faceDescriptor ? JSON.parse(req.body.faceDescriptor) : undefined;
 
+=======
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
             // Clear the session files after using them
             delete req.session.uploadedFiles;
 
@@ -163,6 +166,12 @@ module.exports = {
 
             // Process appearance fields
             const appearanceData = appearance || {};
+<<<<<<< HEAD
+=======
+            // Convert empty strings to undefined for enum fields (Mongoose rejects '' for enum)
+            if (!appearanceData.complexion) delete appearanceData.complexion;
+            if (!appearanceData.build) delete appearanceData.build;
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
             const processedAppearance = {
                 ...appearanceData,
                 facialFeatures: await processField(appearanceData.facialFeatures, 'text'),
@@ -205,9 +214,12 @@ module.exports = {
                 descriptionEnglish: descriptionResult.english,
                 familyDetails: processedFamilyDetails,
                 appearance: processedAppearance,
+<<<<<<< HEAD
                 images: images.length > 0 ? images : [],
 
                 faceDescriptor: faceDescriptor,
+=======
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
                 images: images.length > 0 ? images : []
             });
 

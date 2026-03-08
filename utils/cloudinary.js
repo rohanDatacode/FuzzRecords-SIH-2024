@@ -51,7 +51,13 @@ const upload = multer({
     }
 }).fields([
     { name: 'profileImage', maxCount: 1 },
+<<<<<<< HEAD
     { name: 'idProof', maxCount: 1 }
+=======
+    { name: 'idProof', maxCount: 1 },
+    { name: 'documents', maxCount: 5 },
+    { name: 'images', maxCount: 5 }
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
 ]);
 
 // Wrap upload middleware with error handling

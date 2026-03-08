@@ -3,9 +3,15 @@ const AutoIncrementFactory = require('mongoose-sequence');
 const autoIncrement = AutoIncrementFactory(mongoose);
 
 const profileSchema = new mongoose.Schema({
+<<<<<<< HEAD
     id: { 
         type: Number, 
         unique: true 
+=======
+    id: {
+        type: Number,
+        unique: true
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
     },
     soundexCode: {
         firstName: String,
@@ -38,7 +44,11 @@ const profileSchema = new mongoose.Schema({
         set: v => v === '' ? undefined : v // Convert empty strings to undefined
     },
     email: String,
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
     // Address Information
     address: {
         locationHindi: String,
@@ -186,11 +196,14 @@ const profileSchema = new mongoose.Schema({
         }
     }],
 
+<<<<<<< HEAD
     faceDescriptor: {
         type: [Number], // Stores the mathematical map of the face
         default: undefined
     },
 
+=======
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
     // Add these fields to your schema
     images: [{
         url: String,
@@ -204,14 +217,23 @@ const profileSchema = new mongoose.Schema({
             type: Date,
             default: Date.now
         }
+<<<<<<< HEAD
     }]
     
     
+=======
+    }],
+
+
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
 }, {
     timestamps: true
 });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
 // Apply auto-increment plugin
 profileSchema.plugin(autoIncrement, { inc_field: 'id' });
 
@@ -226,16 +248,28 @@ profileSchema.index({ mNumber: 1 });
 profileSchema.index({ 'cases.case': 1 });
 
 // Virtual for full name
+<<<<<<< HEAD
 profileSchema.virtual('fullNameEnglish').get(function() {
     return `${this.firstNameEnglish} ${this.middleNameEnglish || ''} ${this.lastNameEnglish || ''}`.trim().replace(/\s+/g, ' ');
 });
 
 profileSchema.virtual('fullNameHindi').get(function() {
+=======
+profileSchema.virtual('fullNameEnglish').get(function () {
+    return `${this.firstNameEnglish} ${this.middleNameEnglish || ''} ${this.lastNameEnglish || ''}`.trim().replace(/\s+/g, ' ');
+});
+
+profileSchema.virtual('fullNameHindi').get(function () {
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
     return `${this.firstNameHindi} ${this.middleNameHindi || ''} ${this.lastNameHindi || ''}`.trim().replace(/\s+/g, ' ');
 });
 
 // Pre-save middleware for data validation
+<<<<<<< HEAD
 profileSchema.pre('save', function(next) {
+=======
+profileSchema.pre('save', function (next) {
+>>>>>>> 3efee63c2e506ee2d896186b0f067a4b926504dd
     // Ensure at least one name field is provided
     if (!this.firstNameEnglish && !this.firstNameHindi) {
         next(new Error('At least one name field (English or Hindi) is required'));
