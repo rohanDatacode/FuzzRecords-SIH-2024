@@ -1,270 +1,866 @@
 <% layout('./layout/boilerplate') -%>
 
-    <div class="mb-8">
-        <nav class="flex mb-2" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li class="inline-flex items-center">
-                    <a href="/" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-blue-600">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                            </path>
-                        </svg>
-                        Dashboard
-                    </a>
-                </li>
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        <svg class="w-6 h-6 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="ml-1 text-sm font-medium text-slate-800 md:ml-2">Analytics</span>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .analytics-bg {
+            min-height: 100vh;
+            background: linear-gradient(160deg, #020817 0%, #0c1628 40%, #0f172a 100%);
+            padding-top: 5rem;
+        }
+
+        /* ─── Hero ─────────────────────────────────────────── */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(99, 102, 241, 0.08) 50%, rgba(168, 85, 247, 0.06) 100%);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+            padding: 3rem 2rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: 30%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ─── Stat Cards ──────────────────────────────────── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            padding: 2rem 2rem 0;
+        }
+
+        @media (max-width: 900px) {
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            position: relative;
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            cursor: default;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+            box-shadow: 0 4px 32px rgba(59, 130, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .stat-card.red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.1) 100%);
+            box-shadow: 0 4px 32px rgba(239, 68, 68, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .stat-card.amber {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(180, 83, 9, 0.1) 100%);
+            box-shadow: 0 4px 32px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(21, 128, 61, 0.1) 100%);
+            box-shadow: 0 4px 32px rgba(34, 197, 94, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(109, 40, 217, 0.1) 100%);
+            box-shadow: 0 4px 32px rgba(168, 85, 247, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .stat-card.blue:hover {
+            box-shadow: 0 8px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .stat-card.red:hover {
+            box-shadow: 0 8px 40px rgba(239, 68, 68, 0.4);
+        }
+
+        .stat-card.amber:hover {
+            box-shadow: 0 8px 40px rgba(245, 158, 11, 0.4);
+        }
+
+        .stat-card.green:hover {
+            box-shadow: 0 8px 40px rgba(34, 197, 94, 0.4);
+        }
+
+        .stat-card.purple:hover {
+            box-shadow: 0 8px 40px rgba(168, 85, 247, 0.4);
+        }
+
+        .stat-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blue .stat-icon {
+            background: rgba(59, 130, 246, 0.25);
+            color: #60a5fa;
+        }
+
+        .red .stat-icon {
+            background: rgba(239, 68, 68, 0.25);
+            color: #f87171;
+        }
+
+        .amber .stat-icon {
+            background: rgba(245, 158, 11, 0.25);
+            color: #fbbf24;
+        }
+
+        .green .stat-icon {
+            background: rgba(34, 197, 94, 0.25);
+            color: #4ade80;
+        }
+
+        .purple .stat-icon {
+            background: rgba(168, 85, 247, 0.25);
+            color: #c084fc;
+        }
+
+        .stat-number {
+            font-size: 2.75rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blue .stat-number {
+            color: #93c5fd;
+        }
+
+        .red .stat-number {
+            color: #fca5a5;
+        }
+
+        .amber .stat-number {
+            color: #fde68a;
+        }
+
+        .green .stat-number {
+            color: #86efac;
+        }
+
+        .purple .stat-number {
+            color: #d8b4fe;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(148, 163, 184, 0.8);
+            margin-top: 0.4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card .glow-orb {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            opacity: 0.15;
+            filter: blur(20px);
+        }
+
+        .blue .glow-orb {
+            background: #3b82f6;
+        }
+
+        .red .glow-orb {
+            background: #ef4444;
+        }
+
+        .amber .glow-orb {
+            background: #f59e0b;
+        }
+
+        .green .glow-orb {
+            background: #22c55e;
+        }
+
+        .purple .glow-orb {
+            background: #a855f7;
+        }
+
+        /* ─── Charts ──────────────────────────────────────── */
+        .charts-area {
+            padding: 1.5rem 2rem 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            backdrop-filter: blur(12px);
+            transition: border-color 0.2s;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .chart-row-equal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .chart-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+
+            .chart-row,
+            .chart-row-equal,
+            .chart-row-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .chart-subtitle {
+            font-size: 0.7rem;
+            color: #475569;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-canvas-wrap {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        .chart-canvas-sm {
+            position: relative;
+            height: 180px;
+            width: 100%;
+        }
+
+        /* ─── Bar chart rows ──────────────────────────────── */
+        .hbar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .hbar-label {
+            width: 7rem;
+            font-size: 0.72rem;
+            color: #94a3b8;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 0;
+        }
+
+        .hbar-track {
+            flex: 1;
+            height: 6px;
+            background: rgba(51, 65, 85, 0.6);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .hbar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.8s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .hbar-val {
+            width: 1.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* ─── Pulse dot ───────────────────────────────────── */
+        .pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: blink 1.8s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .4;
+                transform: scale(1.4)
+            }
+        }
+
+        /* ─── Empty state ─────────────────────────────────── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 160px;
+            color: #334155;
+            gap: 0.5rem;
+        }
+
+        .empty-state svg {
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        /* ─── Number counter animation ────────────────────── */
+        .count-up {
+            display: inline-block;
+        }
+    </style>
+
+    <div class="analytics-bg">
+
+        <!-- HERO -->
+        <div class="hero-section">
+            <div style="max-width:1200px; margin:0 auto;">
+                <div class="flex items-center gap-2 text-xs mb-4" style="color:#475569;">
+                    <a href="/" style="color:#475569;" onmouseover="this.style.color='#60a5fa'"
+                        onmouseout="this.style.color='#475569'">Dashboard</a>
+                    <span>›</span>
+                    <span style="color:#94a3b8;">Analytics</span>
+                </div>
+                <div class="flex items-end justify-between flex-wrap gap-4">
+                    <div>
+                        <h1
+                            style="font-size:2rem; font-weight:900; color:#f1f5f9; letter-spacing:-0.03em; line-height:1.1;">
+                            Analytics Dashboard</h1>
+                        <p style="color:#64748b; font-size:0.875rem; margin-top:0.4rem;">Real-time intelligence insights
+                            &amp; statistical overview</p>
                     </div>
-                </li>
-            </ol>
-        </nav>
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Analytics Dashboard</h1>
-                <p class="text-slate-500 mt-1">Real-time insights and statistical overview</p>
+                    <div
+                        style="display:flex; align-items:center; gap:0.5rem; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.25); border-radius:99px; padding:0.4rem 1rem;">
+                        <div class="pulse"></div>
+                        <span style="font-size:0.75rem; font-weight:600; color:#4ade80;">Live Data</span>
+                    </div>
+                </div>
             </div>
-            <div class="flex gap-2">
-                <span
-                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
-                    Live Data
-                </span>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="stat-grid" style="max-width:1200px; margin:0 auto; padding: 2rem 2rem 0;">
+            <div class="stat-card blue">
+                <div class="glow-orb"></div>
+                <div class="stat-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg></div>
+                <p class="stat-number count-up" data-target="<%= stats.total %>">0</p>
+                <p class="stat-label">Total Profiles</p>
             </div>
+            <div class="stat-card red">
+                <div class="glow-orb"></div>
+                <div class="stat-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg></div>
+                <p class="stat-number count-up" data-target="<%= stats.accused %>">0</p>
+                <p class="stat-label">Accused</p>
+            </div>
+            <div class="stat-card amber">
+                <div class="glow-orb"></div>
+                <div class="stat-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg></div>
+                <p class="stat-number count-up" data-target="<%= stats.victim %>">0</p>
+                <p class="stat-label">Victims</p>
+            </div>
+            <div class="stat-card green">
+                <div class="glow-orb"></div>
+                <div class="stat-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg></div>
+                <p class="stat-number count-up" data-target="<%= stats.witness %>">0</p>
+                <p class="stat-label">Witnesses</p>
+            </div>
+            <div class="stat-card purple">
+                <div class="glow-orb"></div>
+                <div class="stat-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg></div>
+                <p class="stat-number count-up" data-target="<%= stats.linkedToCase %>">0</p>
+                <p class="stat-label">Linked to Case</p>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts-area" style="max-width:1200px; margin:0 auto;">
+
+            <!-- Row 1: Monthly (wide) + Gender Donut -->
+            <div class="chart-row">
+                <div class="chart-card">
+                    <p class="chart-title">
+                        <svg class="w-4 h-4" style="color:#3b82f6;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                        </svg>
+                        Monthly Profile Registrations
+                    </p>
+                    <p class="chart-subtitle">New profiles added over the last 12 months</p>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <p class="chart-title">
+                        <svg class="w-4 h-4" style="color:#ec4899;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Gender Distribution
+                    </p>
+                    <p class="chart-subtitle">Breakdown by biological gender</p>
+                    <% if (stats.gender && stats.gender.length> 0) { %>
+                        <div class="chart-canvas-sm">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <p>No gender data yet</p>
+                            </div>
+                            <% } %>
+                </div>
+            </div>
+
+            <!-- Row 2: Cities + States -->
+            <div class="chart-row-equal">
+                <div class="chart-card">
+                    <p class="chart-title">
+                        <svg class="w-4 h-4" style="color:#06b6d4;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        </svg>
+                        Top Cities
+                    </p>
+                    <p class="chart-subtitle">Incident hotspots by city</p>
+                    <% if (stats.location && stats.location.length> 0) { %>
+                        <% const maxCity=Math.max(...stats.location.map(l=> l.count));
+                            const cityColors =
+                            ['#3b82f6','#6366f1','#8b5cf6','#a855f7','#ec4899','#f43f5e','#ef4444','#f97316'];
+                            %>
+                            <div style="margin-top: 0.5rem;">
+                                <% stats.location.forEach((loc, i)=> { %>
+                                    <div class="hbar">
+                                        <div class="hbar-label">
+                                            <%= loc._id || 'Unknown' %>
+                                        </div>
+                                        <div class="hbar-track">
+                                            <div class="hbar-fill"
+                                                style="width:<%= (loc.count / maxCity * 100).toFixed(1) %>%; background:<%= cityColors[i % cityColors.length] %>;">
+                                            </div>
+                                        </div>
+                                        <div class="hbar-val">
+                                            <%= loc.count %>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    </svg>
+                                    <p>Add city to profiles to see hotspots</p>
+                                </div>
+                                <% } %>
+                </div>
+
+                <div class="chart-card">
+                    <p class="chart-title">
+                        <svg class="w-4 h-4" style="color:#10b981;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                        Top States
+                    </p>
+                    <p class="chart-subtitle">Geographic distribution by state</p>
+                    <% if (stats.state && stats.state.length> 0) { %>
+                        <% const maxState=Math.max(...stats.state.map(s=> s.count));
+                            %>
+                            <div style="margin-top: 0.5rem;">
+                                <% stats.state.forEach((s, i)=> { %>
+                                    <div class="hbar">
+                                        <div class="hbar-label">
+                                            <%= s._id || 'Unknown' %>
+                                        </div>
+                                        <div class="hbar-track">
+                                            <div class="hbar-fill"
+                                                style="width:<%= (s.count / maxState * 100).toFixed(1) %>%; background: linear-gradient(90deg, #10b981, #06b6d4);">
+                                            </div>
+                                        </div>
+                                        <div class="hbar-val">
+                                            <%= s.count %>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                                    </svg>
+                                    <p>Add state to profiles to see distribution</p>
+                                </div>
+                                <% } %>
+                </div>
+            </div>
+
+            <!-- Row 3: Age + Case Roles -->
+            <div class="chart-row-equal">
+                <div class="chart-card">
+                    <p class="chart-title">
+                        <svg class="w-4 h-4" style="color:#f59e0b;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Age Group Distribution
+                    </p>
+                    <p class="chart-subtitle">Profile breakdown by age bracket</p>
+                    <% if (stats.age && stats.age.length> 0) { %>
+                        <div class="chart-canvas-sm">
+                            <canvas id="ageChart"></canvas>
+                        </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                <p>Add DOB to profiles to see age data</p>
+                            </div>
+                            <% } %>
+                </div>
+
+                <div class="chart-card">
+                    <p class="chart-title">
+                        <svg class="w-4 h-4" style="color:#a855f7;" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Case Role Breakdown
+                    </p>
+                    <p class="chart-subtitle">How profiles appear across linked cases</p>
+                    <% if (stats.role && stats.role.length> 0) { %>
+                        <div class="chart-canvas-sm">
+                            <canvas id="roleChart"></canvas>
+                        </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <p>Link profiles to cases to see roles</p>
+                            </div>
+                            <% } %>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto space-y-8">
-
-        <!-- Overview Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="card-premium p-6 flex flex-col justify-between hover:border-blue-200 transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                            </path>
-                        </svg>
-                    </div>
-                    <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12%</span>
-                </div>
-                <div>
-                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Records</h4>
-                    <p class="text-3xl font-bold text-slate-800 mt-1">
-                        <%= stats.total %>
-                    </p>
-                </div>
-            </div>
-
-            <div class="card-premium p-6 flex flex-col justify-between hover:border-red-200 transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-red-50 rounded-xl text-red-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
-                            </path>
-                        </svg>
-                    </div>
-                    <span
-                        class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-full">Updated</span>
-                </div>
-                <div>
-                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Criminal Records</h4>
-                    <p class="text-3xl font-bold text-slate-800 mt-1">
-                        <%= stats.criminal %>
-                    </p>
-                </div>
-            </div>
-
-            <div class="card-premium p-6 flex flex-col justify-between hover:border-amber-200 transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-amber-50 rounded-xl text-amber-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
-                            </path>
-                        </svg>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Victim Records</h4>
-                    <p class="text-3xl font-bold text-slate-800 mt-1">
-                        <%= stats.victim %>
-                    </p>
-                </div>
-            </div>
-
-            <div class="card-premium p-6 flex flex-col justify-between hover:border-emerald-200 transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                            </path>
-                        </svg>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Witness Records</h4>
-                    <p class="text-3xl font-bold text-slate-800 mt-1">
-                        <%= stats.witness %>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-            <!-- Monthly Trend -->
-            <div class="card-premium p-6">
-                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
-                    Monthly Trend
-                    <span class="ml-2 text-xs font-normal text-slate-500 px-2 py-1 bg-slate-100 rounded-full">New
-                        Cases</span>
-                </h3>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="monthlyChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Location Distribution -->
-            <div class="card-premium p-6">
-                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
-                    Top Locations
-                    <span class="ml-2 text-xs font-normal text-slate-500 px-2 py-1 bg-slate-100 rounded-full">Incident
-                        Hotspots</span>
-                </h3>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="locationChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Gender Distribution -->
-            <div class="card-premium p-6">
-                <h3 class="text-lg font-bold text-slate-800 mb-6 text-center">Gender Distribution</h3>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="genderChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Age Distribution -->
-            <div class="card-premium p-6">
-                <h3 class="text-lg font-bold text-slate-800 mb-6 text-center">Age Distribution</h3>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="ageChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        // Common Chart Defaults (Premium Theme)
-        Chart.defaults.color = '#64748b'; // Slate-500
+        // ── Animated number counter ─────────────────────────────────
+        document.querySelectorAll('.count-up').forEach(el => {
+            const target = parseInt(el.dataset.target) || 0;
+            if (target === 0) { el.textContent = '0'; return; }
+            let start = 0;
+            const duration = 1200;
+            const step = Math.ceil(target / (duration / 16));
+            const timer = setInterval(() => {
+                start = Math.min(start + step, target);
+                el.textContent = start.toLocaleString();
+                if (start >= target) clearInterval(timer);
+            }, 16);
+        });
+
+        // ── Chart.js dark theme defaults ────────────────────────────
+        Chart.defaults.color = '#64748b';
         Chart.defaults.font.family = "'Inter', sans-serif";
-        Chart.defaults.scale.grid.color = '#f1f5f9'; // Slate-100
+        Chart.defaults.font.size = 11;
 
         const monthlyData = <% - JSON.stringify(stats.monthly) %>;
-        const locationData = <% - JSON.stringify(stats.location) %>;
         const genderData = <% - JSON.stringify(stats.gender) %>;
         const ageData = <% - JSON.stringify(stats.age) %>;
+        const roleData = <% - JSON.stringify(stats.role) %>;
 
-        // Monthly Chart
-        new Chart(document.getElementById('monthlyChart'), {
-            type: 'bar',
-            data: {
-                labels: monthlyData.map(d => d.monthLabel),
-                datasets: [{
-                    label: 'Records',
-                    data: monthlyData.map(d => d.count),
-                    backgroundColor: '#3b82f6', // Blue-500
-                    borderRadius: 4,
-                    barThickness: 20
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, border: { display: false } },
-                    x: { grid: { display: false }, border: { display: false } }
-                }
-            }
-        });
+        // ── Monthly chart ────────────────────────────────────────────
+        const monthCtx = document.getElementById('monthlyChart');
+        if (monthCtx) {
+            const grad = monthCtx.getContext('2d').createLinearGradient(0, 0, 0, 200);
+            grad.addColorStop(0, 'rgba(59,130,246,0.5)');
+            grad.addColorStop(1, 'rgba(59,130,246,0.05)');
 
-        // Location Chart
-        new Chart(document.getElementById('locationChart'), {
-            type: 'bar',
-            data: {
-                labels: locationData.map(d => d._id),
-                datasets: [{
-                    label: 'Records',
-                    data: locationData.map(d => d.count),
-                    backgroundColor: '#6366f1', // Indigo-500
-                    borderRadius: 4,
-                    barThickness: 20
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, border: { display: false } },
-                    x: { grid: { display: false }, border: { display: false } }
-                }
-            }
-        });
-
-        // Gender Chart
-        new Chart(document.getElementById('genderChart'), {
-            type: 'doughnut',
-            data: {
-                labels: genderData.map(d => d._id),
-                datasets: [{
-                    data: genderData.map(d => d.count),
-                    backgroundColor: ['#3b82f6', '#ec4899', '#cbd5e1'], // Blue, Pink, Slate
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+            new Chart(monthCtx, {
+                type: 'line',
+                data: {
+                    labels: monthlyData.map(d => d.monthLabel),
+                    datasets: [{
+                        label: 'Profiles',
+                        data: monthlyData.map(d => d.count),
+                        borderColor: '#3b82f6',
+                        backgroundColor: grad,
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#0f172a',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                        fill: true,
+                        tension: 0.4
+                    }]
                 },
-                cutout: '75%'
-            }
-        });
-
-        // Age Chart
-        new Chart(document.getElementById('ageChart'), {
-            type: 'pie',
-            data: {
-                labels: ageData.map(d => d._id),
-                datasets: [{
-                    data: ageData.map(d => d.count),
-                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.95)',
+                            borderColor: 'rgba(59,130,246,0.3)',
+                            borderWidth: 1,
+                            titleColor: '#94a3b8',
+                            bodyColor: '#e2e8f0',
+                            padding: 10,
+                            callbacks: { label: ctx => `  ${ctx.parsed.y} profile${ctx.parsed.y !== 1 ? 's' : ''}` }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, color: '#475569' },
+                            grid: { color: 'rgba(51,65,85,0.4)' },
+                            border: { display: false }
+                        },
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { color: '#475569', maxRotation: 45 }
+                        }
+                    }
                 }
-            }
-        });
+            });
+        }
+
+// ── Gender donut ─────────────────────────────────────────────
+<% if (stats.gender && stats.gender.length > 0) { %>
+            new Chart(document.getElementById('genderChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: genderData.map(d => {
+                        const g = d._id || 'Unknown';
+                        return g.charAt(0).toUpperCase() + g.slice(1);
+                    }),
+                    datasets: [{
+                        data: genderData.map(d => d.count),
+                        backgroundColor: ['rgba(59,130,246,0.85)', 'rgba(236,72,153,0.85)', 'rgba(148,163,184,0.6)', 'rgba(245,158,11,0.85)'],
+                        borderColor: ['#3b82f6', '#ec4899', '#94a3b8', '#f59e0b'],
+                        borderWidth: 2,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, color: '#94a3b8', font: { size: 11 } } },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.95)',
+                            borderColor: 'rgba(59,130,246,0.3)',
+                            borderWidth: 1,
+                            titleColor: '#94a3b8',
+                            bodyColor: '#e2e8f0'
+                        }
+                    },
+                    cutout: '72%'
+                }
+            });
+<% } %>
+
+// ── Age pie ──────────────────────────────────────────────────
+<% if (stats.age && stats.age.length > 0) { %>
+            new Chart(document.getElementById('ageChart'), {
+                type: 'bar',
+                data: {
+                    labels: ageData.map(d => d._id),
+                    datasets: [{
+                        data: ageData.map(d => d.count),
+                        backgroundColor: ['rgba(59,130,246,0.75)', 'rgba(16,185,129,0.75)', 'rgba(245,158,11,0.75)', 'rgba(239,68,68,0.75)', 'rgba(139,92,246,0.75)'],
+                        borderColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.95)',
+                            borderColor: 'rgba(59,130,246,0.3)',
+                            borderWidth: 1,
+                            titleColor: '#94a3b8',
+                            bodyColor: '#e2e8f0'
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#475569' }, grid: { color: 'rgba(51,65,85,0.4)' }, border: { display: false } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { color: '#475569' } }
+                    }
+                }
+            });
+<% } %>
+
+// ── Case roles donut ─────────────────────────────────────────
+<% if (stats.role && stats.role.length > 0) { %>
+            new Chart(document.getElementById('roleChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: roleData.map(d => { const r = d._id || 'Unknown'; return r.charAt(0).toUpperCase() + r.slice(1); }),
+                    datasets: [{
+                        data: roleData.map(d => d.count),
+                        backgroundColor: ['rgba(239,68,68,0.8)', 'rgba(245,158,11,0.8)', 'rgba(34,197,94,0.8)', 'rgba(59,130,246,0.8)', 'rgba(168,85,247,0.8)'],
+                        borderColor: ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7'],
+                        borderWidth: 2,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 14, color: '#94a3b8', font: { size: 11 } } },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.95)',
+                            borderColor: 'rgba(59,130,246,0.3)',
+                            borderWidth: 1,
+                            titleColor: '#94a3b8',
+                            bodyColor: '#e2e8f0'
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+<% } %>
     </script>

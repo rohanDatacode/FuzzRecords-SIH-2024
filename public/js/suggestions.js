@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('Suggestions script loaded');
 
     const searchInput = document.querySelector('#search-input');
@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let debounceTimer;
 
-    searchInput.addEventListener('input', function() {
+    searchInput.addEventListener('input', function () {
         clearTimeout(debounceTimer);
-        
+
         if (!this.value.trim()) {
             suggestionsList.innerHTML = '';
             return;
@@ -26,12 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const response = await fetch(`/analytics/api/suggestions?query=${encodeURIComponent(this.value)}`);
                 if (!response.ok) throw new Error('Network response was not ok');
-                
+
                 const suggestions = await response.json();
-                
+
                 // Clear previous suggestions
                 suggestionsList.innerHTML = '';
-                
+
                 if (suggestions.length === 0) {
                     suggestionsList.innerHTML = `
                         <li class="px-4 py-2 text-gray-500">No matches found</li>
@@ -43,12 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 suggestions.forEach(suggestion => {
                     const li = document.createElement('li');
                     li.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
-                    
+
                     // Highlight matching text
                     const searchValue = searchInput.value.toLowerCase();
                     const suggestionText = suggestion.name;
                     const matchIndex = suggestionText.toLowerCase().indexOf(searchValue);
-                    
+
                     if (matchIndex >= 0) {
                         const before = suggestionText.slice(0, matchIndex);
                         const match = suggestionText.slice(matchIndex, matchIndex + searchValue.length);
@@ -73,11 +73,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle keyboard navigation
-    searchInput.addEventListener('keydown', function(e) {
+    searchInput.addEventListener('keydown', function (e) {
         const items = suggestionsList.getElementsByTagName('li');
         const activeItem = suggestionsList.querySelector('.bg-gray-100');
-        
-        switch(e.key) {
+
+        switch (e.key) {
             case 'ArrowDown':
                 e.preventDefault();
                 if (!activeItem) {
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 break;
-                
+
             case 'ArrowUp':
                 e.preventDefault();
                 if (activeItem) {
@@ -101,14 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 break;
-                
+
             case 'Enter':
                 if (activeItem) {
                     e.preventDefault();
                     activeItem.click();
                 }
                 break;
-                
+
             case 'Escape':
                 suggestionsList.innerHTML = '';
                 break;
@@ -146,10 +146,10 @@ document.addEventListener('DOMContentLoaded', function() {
     async function fetchSuggestions(type) {
         const input = document.getElementById(`${type}Input`).value;
         console.log(`Fetching suggestions for ${type}:`, input);
-        
+
         const suggestionsList = document.getElementById(`${type}SuggestionsList`);
         const otherTypes = ['firstName', 'middleName', 'lastName'].filter(t => t !== type);
-        
+
         // Hide other suggestion lists
         otherTypes.forEach(otherType => {
             const otherList = document.getElementById(`${otherType}SuggestionsList`);
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(`/api/suggestions?type=${type}&query=${encodeURIComponent(input)}`);
             if (!response.ok) throw new Error('Failed to fetch suggestions');
-            
+
             const suggestions = await response.json();
             console.log(`Received suggestions for ${type}:`, suggestions);
 
@@ -176,10 +176,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             suggestionsList.innerHTML = suggestions.map(suggestion => {
                 const nameField = type === 'firstName' ? 'firstNameEnglish' :
-                                type === 'middleName' ? 'middleNameEnglish' : 'lastNameEnglish';
+                    type === 'middleName' ? 'middleNameEnglish' : 'lastNameEnglish';
                 const hindiField = type === 'firstName' ? 'firstNameHindi' :
-                                 type === 'middleName' ? 'middleNameHindi' : 'lastNameHindi';
-                
+                    type === 'middleName' ? 'middleNameHindi' : 'lastNameHindi';
+
                 return `
                     <li class="px-4 py-2 hover:bg-blue-400/20 cursor-pointer transition-all"
                         onclick="selectSuggestion('${type}', '${suggestion[nameField]}')">
@@ -197,11 +197,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Update click handler to hide all suggestion lists
-    document.addEventListener('click', function(e) {
-        const suggestionLists = ['firstName', 'middleName', 'lastName'].map(type => 
+    document.addEventListener('click', function (e) {
+        const suggestionLists = ['firstName', 'middleName', 'lastName'].map(type =>
             document.getElementById(`${type}SuggestionsList`)
         );
-        const inputs = ['firstName', 'middleName', 'lastName'].map(type => 
+        const inputs = ['firstName', 'middleName', 'lastName'].map(type =>
             document.getElementById(`${type}Input`)
         );
 
@@ -216,15 +216,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let focusedInputId = null;
 
     // Add focus event listeners to all input fields
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const inputFields = ['firstNameInput', 'middleNameInput', 'lastNameInput'];
         inputFields.forEach(id => {
             const input = document.getElementById(id);
             if (input) {
-                input.addEventListener('focus', function() {
+                input.addEventListener('focus', function () {
                     focusedInputId = this.id;
                 });
-                input.addEventListener('blur', function() {
+                input.addEventListener('blur', function () {
                     // Small delay to allow for button clicks
                     setTimeout(() => {
                         if (!document.getElementById('speechModal').contains(document.activeElement)) {
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let recognition = null;
     const voiceButton = document.getElementById('voiceSearchButton');
     const micStatus = document.getElementById('micStatus');
-    let focusedInputId = null;
+    // focusedInputId is already declared above
 
     // Add focus event listeners to all input fields
     const inputFields = ['firstNameInput', 'middleNameInput', 'lastNameInput'];
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     inputFields.forEach(id => {
         const input = document.getElementById(id);
         if (input) {
-            input.addEventListener('focus', function() {
+            input.addEventListener('focus', function () {
                 focusedInputId = this.id;
                 if (voiceButton) {
                     voiceButton.classList.add('border-blue-400');
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 updateMicStatus();
             });
-            input.addEventListener('blur', function() {
+            input.addEventListener('blur', function () {
                 setTimeout(() => {
                     if (!document.getElementById('speechModal').contains(document.activeElement)) {
                         focusedInputId = null;
@@ -307,12 +307,12 @@ document.addEventListener('DOMContentLoaded', function() {
         isListening = true;
         const modal = document.getElementById('speechModal');
         modal.style.display = 'flex';
-        
+
         if (voiceButton) {
             voiceButton.classList.add('bg-blue-500/40');
             voiceButton.classList.add('text-blue-300');
         }
-        
+
         updateMicStatus();
         startSpeechRecognition();
     }
@@ -328,20 +328,19 @@ document.addEventListener('DOMContentLoaded', function() {
         isListening = false;
         const modal = document.getElementById('speechModal');
         modal.style.display = 'none';
-        
+
         if (voiceButton) {
             voiceButton.classList.remove('bg-blue-500/40');
             voiceButton.classList.remove('text-blue-300');
         }
-        
+
         updateMicStatus();
     }
 
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
-            type === 'error' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'
-        }`;
+        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${type === 'error' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'
+            }`;
         notification.textContent = message;
         document.body.appendChild(notification);
         setTimeout(() => notification.remove(), 3000);
@@ -360,12 +359,12 @@ document.addEventListener('DOMContentLoaded', function() {
             recognition.interimResults = false;
             recognition.lang = 'hi-IN'; // Default to Hindi
 
-            recognition.onstart = function() {
+            recognition.onstart = function () {
                 showNotification('Listening started');
                 updateMicStatus();
             };
 
-            recognition.onresult = function(event) {
+            recognition.onresult = function (event) {
                 const result = event.results[0][0].transcript;
                 if (focusedInputId) {
                     const input = document.getElementById(focusedInputId);
@@ -377,13 +376,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 closeSpeechModal();
             };
 
-            recognition.onerror = function(event) {
+            recognition.onerror = function (event) {
                 console.error('Speech recognition error:', event.error);
                 showNotification(`Error: ${event.error}`, 'error');
                 closeSpeechModal();
             };
 
-            recognition.onend = function() {
+            recognition.onend = function () {
                 isListening = false;
                 updateMicStatus();
                 closeSpeechModal();
@@ -398,14 +397,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add event listeners for closing modal
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape' && isListening) {
             stopVoiceInput();
         }
     });
 
     // Click outside modal to close
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         const modal = document.getElementById('speechModal');
         if (event.target === modal) {
             stopVoiceInput();
@@ -417,4 +416,3 @@ document.addEventListener('DOMContentLoaded', function() {
     window.stopVoiceInput = stopVoiceInput;
     window.closeSpeechModal = closeSpeechModal;
 });
-  

@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const searchController = require("../controllers/searchController");
 
-router.get("/" ,searchController.searchRecord);
+router.get("/", searchController.searchRecord);
 
-router.post("/" ,searchController.resultRecord);
+router.post("/", searchController.resultRecord);
+
+
 
 module.exports = router;

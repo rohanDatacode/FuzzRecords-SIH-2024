@@ -3,9 +3,9 @@ const AutoIncrementFactory = require('mongoose-sequence');
 const autoIncrement = AutoIncrementFactory(mongoose);
 
 const profileSchema = new mongoose.Schema({
-    id: { 
-        type: Number, 
-        unique: true 
+    id: {
+        type: Number,
+        unique: true
     },
     soundexCode: {
         firstName: String,
@@ -38,7 +38,7 @@ const profileSchema = new mongoose.Schema({
         set: v => v === '' ? undefined : v // Convert empty strings to undefined
     },
     email: String,
-    
+
     // Address Information
     address: {
         locationHindi: String,
@@ -199,7 +199,9 @@ const profileSchema = new mongoose.Schema({
             type: Date,
             default: Date.now
         }
-    }]
+    }],
+
+
 }, {
     timestamps: true
 });
@@ -218,16 +220,16 @@ profileSchema.index({ mNumber: 1 });
 profileSchema.index({ 'cases.case': 1 });
 
 // Virtual for full name
-profileSchema.virtual('fullNameEnglish').get(function() {
+profileSchema.virtual('fullNameEnglish').get(function () {
     return `${this.firstNameEnglish} ${this.middleNameEnglish || ''} ${this.lastNameEnglish || ''}`.trim().replace(/\s+/g, ' ');
 });
 
-profileSchema.virtual('fullNameHindi').get(function() {
+profileSchema.virtual('fullNameHindi').get(function () {
     return `${this.firstNameHindi} ${this.middleNameHindi || ''} ${this.lastNameHindi || ''}`.trim().replace(/\s+/g, ' ');
 });
 
 // Pre-save middleware for data validation
-profileSchema.pre('save', function(next) {
+profileSchema.pre('save', function (next) {
     // Ensure at least one name field is provided
     if (!this.firstNameEnglish && !this.firstNameHindi) {
         next(new Error('At least one name field (English or Hindi) is required'));

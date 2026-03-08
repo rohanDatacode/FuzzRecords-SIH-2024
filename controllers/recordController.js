@@ -161,6 +161,9 @@ module.exports = {
 
             // Process appearance fields
             const appearanceData = appearance || {};
+            // Convert empty strings to undefined for enum fields (Mongoose rejects '' for enum)
+            if (!appearanceData.complexion) delete appearanceData.complexion;
+            if (!appearanceData.build) delete appearanceData.build;
             const processedAppearance = {
                 ...appearanceData,
                 facialFeatures: await processField(appearanceData.facialFeatures, 'text'),
